@@ -13,7 +13,7 @@ VALID_SYMBOLS = [X, O]
 VALID_PLAYERS = [HUMAN, COMPUTER]
 GAME_BOARD = [
     ['ಥ_ಥ', ' A ', ' B ', ' C '],
-    [' 1 ', ' - ', ' - ', ' - '],
+    [' 1 ', ' X ', ' - ', ' - '],
     [' 2 ', ' - ', ' - ', ' - '],
     [' 3 ', ' - ', ' - ', ' - ']
 ]
@@ -71,20 +71,21 @@ def isInputValidMove(userInput):
 
 def isSpaceAvailable(move, activeGameBoard):
     spaceIndex = GAME_BOARD_INDEX[move]
-    targetSpace = activeGameBoard[spaceIndex[0]][spaceIndex[2]]
-
+    targetSpace = activeGameBoard[spaceIndex[0]][spaceIndex[1]]
     return targetSpace == BLANK_CELL
 
 def writeMoveToBoard(move, activeGameBoard, symbol):
     spaceIndex = GAME_BOARD_INDEX[move]
-    activeGameBoard[spaceIndex[0]][spaceIndex [2]] = " " + symbol + " "
+    activeGameBoard[spaceIndex[0]][spaceIndex [1]] = " " + symbol + " "
 
 def checkForWin(movesList):
+    print(movesList, "checking for win")
    # A1 in potential wins in movesList
         # yes check next value
         # no next potential wins list
 
-def checkForTie(activeGameBoard)
+def checkForTie(activeGameBoard):
+    print(activeGameBoard, "checking for tie")
     # are all spaces filled (assumes no winner has already returned false)
     # loop through values in GAMEBOARD index and check if cell is empty. If all false, return True for tie
 
@@ -161,19 +162,21 @@ def getHumanMove(activeGameBoard):
 
 
 def getComputerMove(activeGameBoard):
-    print("Getting Computer Move")
+    isSpaceAvailableBool = False
+    randomIndex = 0
+    randomMove = ""
+
     # select random space
-    # isSpaceAvailable
-    # while is Space Available == false
-        # new random space
-        # check if available
+    randomIndex = random.randint(0, 8)
+    randomMove = VALID_MOVES[randomIndex]
+    isSpaceAvailableBool = isSpaceAvailable(randomMove, activeGameBoard)
+
+    while isSpaceAvailableBool == False:
+        randomIndex = random.randint(0, 8)
+        randomMove = VALID_MOVES[randomIndex]
+        isSpaceAvailableBool = isSpaceAvailable(randomMove, activeGameBoard)
     
-    #available space assigned
-    # return available space
-
-def 
-
-
+    return randomMove
 
 def gamePlay(firstTurnIndex, symbolAssignmentHash):
     activeGameBoard = GAME_BOARD.copy()
@@ -182,6 +185,7 @@ def gamePlay(firstTurnIndex, symbolAssignmentHash):
     computerMovesList = []
     gameOver = False
     userMove = ""
+    computerMove = ""
 
     while gameOver == False:
                    
@@ -189,30 +193,38 @@ def gamePlay(firstTurnIndex, symbolAssignmentHash):
             gameMessage("Your move!")
             userMove = getHumanMove(activeGameBoard.copy())
             userMovesList.append(userMove)
-           
-            # if checkForWin(userMovesList)
-                # You won! gameover=True
-            # elsif checkForTie(activeGameBoard)
-                # Game is a tie. gameOver=true
-            # else
-                # next turn
-            currentTurnIndex = 0 if currentTurnIndex == 1 else 1
+
+            if checkForWin(userMovesList) == True:
+                gameMessage("You Won")
+                gameOver == True
+            elif checkForTie(activeGameBoard) == True:
+                gameMessage("It's a tie!")
+                gameOver == True
+            else:
+                currentTurnIndex = 0 if currentTurnIndex == 1 else 1
+            
             writeMoveToBoard( userMove, activeGameBoard, symbolAssignmentHash[HUMAN] )
             printBoard(activeGameBoard)
             
         if VALID_PLAYERS[currentTurnIndex] == COMPUTER:
             gameMessage("Computer Move")
-            # getComputerMove
-            # computerMovesList.append(computermove)
-             # writeMoveToBoard(getComputerMove(), activeGameBoard)
-            # if checkForWin(activeGameBoard)
-                # You won! gameover=True
-            # elsif checkForTie(activeGameBoard)
-                # Game is a tie. gameOver=true
-            # else
-                # next turn
+            computerMove = getComputerMove(activeGameBoard.copy())
+            computerMovesList.append(computerMove)
+            print(computerMove)
             
-            currentTurnIndex = 0 if currentTurnIndex == 1 else 1
+            if checkForWin(computerMovesList) == True:
+                gameMessage("Computer Won")
+                gameOver == True
+            elif checkForTie(activeGameBoard) == True:
+                gameMessage("It's a tie!")
+                gameOver == True
+            else:
+                currentTurnIndex = 0 if currentTurnIndex == 1 else 1
+                
+            writeMoveToBoard(computerMove, activeGameBoard, symbolAssignmentHash[COMPUTER])
+            printBoard(activeGameBoard)
+            
+            
 
 
 
