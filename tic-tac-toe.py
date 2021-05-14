@@ -5,17 +5,18 @@ from terminaltables import AsciiTable
 # constants
 X = "X"
 O = "O"
-VALID_SYMBOLS = [X, O]
 HUMAN = "human"
 COMPUTER = "computer"
+BLANK_CELL = ' - '
+
+VALID_SYMBOLS = [X, O]
 VALID_PLAYERS = [HUMAN, COMPUTER]
 GAME_BOARD = [
-    ['   ', ' A ', ' B ', ' C '],
+    ['ಥ_ಥ', ' A ', ' B ', ' C '],
     [' 1 ', ' - ', ' - ', ' - '],
     [' 2 ', ' - ', ' - ', ' - '],
     [' 3 ', ' - ', ' - ', ' - ']
 ]
-BLANK_CELL = ' - '
 GAME_BOARD_INDEX = {
     "A1" : [1,1],
     "A2" : [2,1],
@@ -43,29 +44,53 @@ def gameMessage(message):
     print(message)
     print(str("=" * len(message)))
 
+def printBoard(board):
+    table = AsciiTable(board)
+    print(table.table)
+
 def startGame():
     introduction()
     pickSymbol()
 
+def isSymbolValid(rawUserInputSymbol):
+    return rawUserInputSymbol in VALID_SYMBOLS
+
+def isInputValidMove(userInput):
+    return userInput in VALID_MOVES
+
+def isSpaceAvailable(move, activeGameBoard):
+    spaceIndex = GAME_BOARD_INDEX[move]
+    targetSpace = activeGameBoard[spaceIndex[0]][spaceIndex[1]]
+
+    return targetSpace == BLANK_CELL
+
+def writeMoveToBoard(move, activeGameBoard, symbol):
+    spaceIndex = GAME_BOARD_INDEX[move]
+    activeGameBoard[spaceIndex[0]][spaceIndex [1]] = " " + symbol + " "
+
 # Pick a symbol
 def pickSymbol():
-    userInputSymbol = ""
+    rawInputSymbol = ""
+    validInputSymbol = ""
     computerSymbol = ""
+    isSymbolValidBool = False
+    symbolAssignmentHash = {}
 
     gameMessage("Pick a symbol: X or O")
-    userInputSymbol = input().upper()
-    
-    while userInputSymbol not in VALID_SYMBOLS:
+    rawInputSymbol = input().upper()
+    isSymbolValidBool = isSymbolValid(rawInputSymbol)
+
+    while isSymbolValidBool == False:
         gameMessage("Must be X or O")
         #improvement, allow user to choose symbols
-        userInputSymbol = input().upper()
+        rawInputSymbol = input().upper()
+        isSymbolValidBool = isSymbolValid(rawInputSymbol)
     
+    validInputSymbol = rawInputSymbol
+    computerSymbol = VALID_SYMBOLS[VALID_SYMBOLS.index(validInputSymbol) - 1]
+    symbolAssignmentHash = {HUMAN: validInputSymbol, COMPUTER: computerSymbol}
 
-    computerSymbol = VALID_SYMBOLS[VALID_SYMBOLS.index(userInputSymbol) - 1]
-
-    symbolAssignmentHash = {HUMAN: userInputSymbol, COMPUTER: computerSymbol}
-
-    gameMessage("You chose " + userInputSymbol + "!")
+    gameMessage("You chose " + validInputSymbol + "!")
     gameMessage("Computer will play as " + computerSymbol + "!")
 
     pickFirstTurn(symbolAssignmentHash)
@@ -78,18 +103,9 @@ def pickFirstTurn(symbolAssignmentHash):
         gameMessage("You will go first!")
     else:
         gameMessage(VALID_PLAYERS[firstTurnIndex].capitalize() + " will go first!")
-    
 
-    gamePlay(firstTurnIndex)
+    gamePlay(firstTurnIndex, symbolAssignmentHash)
 
-def isInputValidMove(userInput):
-    return userInput in VALID_MOVES
-
-def isSpaceAvailable(move, activeGameBoard):
-    spaceIndex = GAME_BOARD_INDEX[move]
-    targetSpace = activeGameBoard[spaceIndex[0]][spaceIndex[1]]
-
-    return targetSpace == BLANK_CELL
 
 def getHumanMove(activeGameBoard):
     isSpaceAvailableBool = False
@@ -99,10 +115,10 @@ def getHumanMove(activeGameBoard):
     rawInputMove = ""
 
     # First input attempt
-    gameMessage("Make a move!")
     rawInputMove = input().upper()
     
     # Is the input a valid move and is space available?
+    # abstract this into a new function validateMove() with sanitizeInput and isSpaceTaken?
     while (moveConfirmed == False):
         isInputValidBool = isInputValidMove(rawInputMove)
         
@@ -112,74 +128,67 @@ def getHumanMove(activeGameBoard):
 
             if isSpaceAvailableBool == True:
                 moveConfirmed = True
+            
+            else:
+                gameMessage("That space is already taken.")
+                rawInputMove = input().upper()
         else:
-            gameMessage("Invalid Move. Try A1, C3...")
+            gameMessage("Invalid move. Try A1, C3...")
             rawInputMove = input().upper()
     
     return validInputMove
 
 
 
-def getComputerMove():
+def getComputerMove(activeGameBoard):
     print("Getting Computer Move")
-    # whatSpacesAreAvailable()
     # select random space
-
-def writeMoveToBoard(move, gameBoard):
-    print(move, gameBoard)
-    [print(GAME_BOARD)]
-
-   
-    # assign move to gameBoard
-    # checkForWin()
-    # checkForTie()
-    # printGameBoard(win=false, tie=true)
-    print("ay")
+    # isSpaceAvailable
+    # while is Space Available == false
+        # new random space
+        # check if available
+    
+    #available space assigned
+    # return available space
 
 
-def gamePlay(firstTurnIndex):
+
+
+
+def gamePlay(firstTurnIndex, symbolAssignmentHash):
     activeGameBoard = GAME_BOARD.copy()
     currentTurnIndex = firstTurnIndex
     gameOver = False
-    
+    userMove = ""
+
     while gameOver == False:
-        print()
-        print(VALID_PLAYERS[currentTurnIndex].capitalize() + " makes a move")
-        
+                   
         if VALID_PLAYERS[currentTurnIndex] == HUMAN:
-            x = getHumanMove(activeGameBoard.copy())
-            print(x, "move returned")
-        
+            gameMessage("Your move!")
+            userMove = getHumanMove(activeGameBoard.copy())
+            writeMoveToBoard( userMove, activeGameBoard, symbolAssignmentHash[HUMAN] )
+           
+            # if checkForWin(activeGameBoard)
+                # You won! gameover=True
+            # elsif checkForTie(activeGameBoard)
+                # Game is a tie. gameOver=true
+            # else
+                # next turn
+            currentTurnIndex = 0 if currentTurnIndex == 1 else 1
+            printBoard(activeGameBoard)
+            
         if VALID_PLAYERS[currentTurnIndex] == COMPUTER:
-            print("Computer Move")
-            # writeMoveToBoard(getComputerMove(), activeGameBoard)
-       
-        # added just to prevent infinite loop. gameOver needs to eventually be set true
-        x = input()
-        currentTurnIndex = 0 if currentTurnIndex == 1 else 1
-
-        #breakdown of a move.
-        ## HUMAN
-        # Is it valid move input? (A1, C3 etc...)
-            # If not, ask for input again
-        # Is the space available?
-            # if not, ask for another input, re-validate valid input, check for space again
-        # If yes and yes
-            #assign to board, check if win or all spaces full?
-            # print board to console
-        
-        ## COMPUTER
-            # What spaces are available?
-            # Randomly assign to available space (can refine this later)
-            # check if win or all spaces full?
-            # Print board to console
-        
-        #IF win
-            # print winner message
-        #If full
-            # print tie message
-        # Ask if want to play again
-
+            gameMessage("Computer Move")
+            # getComputerMove
+             # writeMoveToBoard(getComputerMove(), activeGameBoard)
+            # if checkForWin(activeGameBoard)
+                # You won! gameover=True
+            # elsif checkForTie(activeGameBoard)
+                # Game is a tie. gameOver=true
+            # else
+                # next turn
+            
+            currentTurnIndex = 0 if currentTurnIndex == 1 else 1
 
 
 
