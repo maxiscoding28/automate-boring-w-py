@@ -1,4 +1,3 @@
-
 # imports
 import random
 from terminaltables import AsciiTable
@@ -27,6 +26,7 @@ GAME_BOARD_INDEX = {
     "C2" : [2,3],
     "C3" : [3,3]
 }
+VALID_MOVES = list(GAME_BOARD_INDEX.keys())
 
 # print the intro message to console
 def introduction():
@@ -81,10 +81,44 @@ def pickFirstTurn(symbolAssignmentHash):
 
     gamePlay(firstTurnIndex)
 
-def getHumanMove():
-    print("Getting Human Move")
-    # isInputValid() must be true
-    # isSpaceAvailable must be true
+def isInputValidMove(userInput):
+    return userInput in VALID_MOVES
+
+def isSpaceAvailable(move):
+    print("ayo")
+
+def getHumanMove(activeGameBoard):
+    isInputValidBool = False
+    isSpaceAvailableBool = False
+    gameMessage("Make a move!")
+    rawInputMove = input().upper()
+    validInputMove = ""
+    
+    
+    # Is the input a valid move?
+    while isInputValidBool == False:
+        isInputValidBool = isInputValidMove(rawInputMove)
+
+        if isInputValidBool == True:
+                 # Is the space available
+                #  while isSpaceAvailableBool = False
+                    # isSpaceAvailableBool = isSpaceAvailable(activeGameBoard, validInputMove)
+
+                # if isSpaceAvailableBool == True
+                    # break
+        
+                # else
+                    # "Space Must be available"
+            
+            validInputMove = rawInputMove
+            break
+        
+        else:
+            gameMessage("Not a valid move. E.X A1, C33")
+            rawInputMove = input().upper()
+    
+    return validInputMove
+
 
 def getComputerMove():
     print("Getting Computer Move")
@@ -92,14 +126,19 @@ def getComputerMove():
     # select random space
 
 def writeMoveToBoard(move, gameBoard):
+    print(move, gameBoard)
+    [print(GAME_BOARD)]
+
+   
     # assign move to gameBoard
     # checkForWin()
     # checkForTie()
     # printGameBoard(win=false, tie=true)
+    print("ay")
 
 
 def gamePlay(firstTurnIndex):
-    # activeGameBoard = GAMEBOARD.copy()
+    activeGameBoard = GAME_BOARD.copy()
     currentTurnIndex = firstTurnIndex
     gameOver = False
     
@@ -108,8 +147,7 @@ def gamePlay(firstTurnIndex):
         print(VALID_PLAYERS[currentTurnIndex].capitalize() + " makes a move")
         
         if VALID_PLAYERS[currentTurnIndex] == HUMAN:
-            print("Human Move")
-            # writeMoveToBoard(getHumanMove(), activeGameBoard)
+            getHumanMove(activeGameBoard)
         
         if VALID_PLAYERS[currentTurnIndex] == COMPUTER:
             print("Computer Move")
