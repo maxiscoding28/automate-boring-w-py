@@ -15,6 +15,7 @@ GAME_BOARD = [
     [' 2 ', ' - ', ' - ', ' - '],
     [' 3 ', ' - ', ' - ', ' - ']
 ]
+BLANK_CELL = ' - '
 GAME_BOARD_INDEX = {
     "A1" : [1,1],
     "A2" : [2,1],
@@ -84,40 +85,39 @@ def pickFirstTurn(symbolAssignmentHash):
 def isInputValidMove(userInput):
     return userInput in VALID_MOVES
 
-def isSpaceAvailable(move):
-    print("ayo")
+def isSpaceAvailable(move, activeGameBoard):
+    spaceIndex = GAME_BOARD_INDEX[move]
+    targetSpace = activeGameBoard[spaceIndex[0]][spaceIndex[1]]
+
+    return targetSpace == BLANK_CELL
 
 def getHumanMove(activeGameBoard):
-    isInputValidBool = False
     isSpaceAvailableBool = False
+    isInputValidBool = False
+    moveConfirmed = False
+    validInputMove = ""
+    rawInputMove = ""
+
+    # First input attempt
     gameMessage("Make a move!")
     rawInputMove = input().upper()
-    validInputMove = ""
     
-    
-    # Is the input a valid move?
-    while isInputValidBool == False:
+    # Is the input a valid move and is space available?
+    while (moveConfirmed == False):
         isInputValidBool = isInputValidMove(rawInputMove)
-
+        
         if isInputValidBool == True:
-                 # Is the space available
-                #  while isSpaceAvailableBool = False
-                    # isSpaceAvailableBool = isSpaceAvailable(activeGameBoard, validInputMove)
-
-                # if isSpaceAvailableBool == True
-                    # break
-        
-                # else
-                    # "Space Must be available"
-            
             validInputMove = rawInputMove
-            break
-        
+            isSpaceAvailableBool = isSpaceAvailable(validInputMove, activeGameBoard)
+
+            if isSpaceAvailableBool == True:
+                moveConfirmed = True
         else:
-            gameMessage("Not a valid move. E.X A1, C33")
+            gameMessage("Invalid Move. Try A1, C3...")
             rawInputMove = input().upper()
     
     return validInputMove
+
 
 
 def getComputerMove():
@@ -147,7 +147,8 @@ def gamePlay(firstTurnIndex):
         print(VALID_PLAYERS[currentTurnIndex].capitalize() + " makes a move")
         
         if VALID_PLAYERS[currentTurnIndex] == HUMAN:
-            getHumanMove(activeGameBoard)
+            x = getHumanMove(activeGameBoard.copy())
+            print(x, "move returned")
         
         if VALID_PLAYERS[currentTurnIndex] == COMPUTER:
             print("Computer Move")
