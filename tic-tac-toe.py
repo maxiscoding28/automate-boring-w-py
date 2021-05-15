@@ -1,7 +1,7 @@
 # imports
 import random
 from terminaltables import AsciiTable
-
+import time
 # constants
 X = "X"
 O = "O"
@@ -79,21 +79,25 @@ def writeMoveToBoard(move, activeGameBoard, symbol):
     activeGameBoard[spaceIndex[0]][spaceIndex [1]] = " " + symbol + " "
 
 def checkForWin(movesList):
-    print(movesList, "checking for win")
-   # A1 in potential wins in movesList
-        # yes check next value
-        # no next potential wins list
+    for winOption in WIN_COMBINATIONS:
+        winTarget = 0
+        for space in winOption:
+            if space not in movesList:
+                break
+            else:
+                winTarget+=1
+
+                if (winTarget == 3):
+                    return True
 
 def checkForTie(activeGameBoard):
-    allCellsList = []
-    print(activeGameBoard, "checking for tie")
+    markedCellsList = []
 
     for row in range(1,4):
         for cell in range(1,4):
-            allCellsList.append(activeGameBoard[row][cell])
+            markedCellsList.append(activeGameBoard[row][cell])
 
-    print(BLANK_CELL  not in allCellsList)
-    return BLANK_CELL  not in allCellsList
+    return BLANK_CELL not in markedCellsList
 
 # Pick a symbol
 def pickSymbol():
@@ -108,7 +112,8 @@ def pickSymbol():
     isSymbolValidBool = isSymbolValid(rawInputSymbol)
 
     while isSymbolValidBool == False:
-        gameMessage("Must be X or O")
+        gameMessage("Must be X or O ¯\_(ツ)_/¯")
+        
         #improvement, allow user to choose symbols
         rawInputSymbol = input().upper()
         isSymbolValidBool = isSymbolValid(rawInputSymbol)
@@ -117,8 +122,8 @@ def pickSymbol():
     computerSymbol = VALID_SYMBOLS[VALID_SYMBOLS.index(validInputSymbol) - 1]
     symbolAssignmentHash = {HUMAN: validInputSymbol, COMPUTER: computerSymbol}
 
-    gameMessage("You chose " + validInputSymbol + "!")
-    gameMessage("Computer will play as " + computerSymbol + "!")
+    gameMessage("You chose " + validInputSymbol + "! (ง ͡ʘ ͜ʖ ͡ʘ)ง")
+    gameMessage("Computer will play as " + computerSymbol + "! ¯\_(ツ)_/¯")
 
     pickFirstTurn(symbolAssignmentHash)
 
@@ -127,9 +132,9 @@ def pickFirstTurn(symbolAssignmentHash):
     firstTurn = VALID_PLAYERS[firstTurnIndex]
 
     if firstTurn == HUMAN:
-        gameMessage("You will go first!")
+        gameMessage("You will go first! ( ͡° ل͜ ͡°)")
     else:
-        gameMessage(VALID_PLAYERS[firstTurnIndex].capitalize() + " will go first!")
+        gameMessage(VALID_PLAYERS[firstTurnIndex].capitalize() + " will go first! ヽ(´Д`;)ﾉ")
 
     gamePlay(firstTurnIndex, symbolAssignmentHash)
 
@@ -157,10 +162,10 @@ def getHumanMove(activeGameBoard):
                 moveConfirmed = True
             
             else:
-                gameMessage("That space is already taken.")
+                gameMessage("That space is already taken. ( ͡°Ĺ̯ ͡° )")
                 rawInputMove = input().upper()
         else:
-            gameMessage("Invalid move. Try A1, C3...")
+            gameMessage("Invalid move. Try A1, C3... (⩺︷⩹)")
             rawInputMove = input().upper()
     
     return validInputMove
@@ -171,6 +176,9 @@ def getComputerMove(activeGameBoard):
     isSpaceAvailableBool = False
     randomIndex = 0
     randomMove = ""
+
+    # mimic the computer thinking
+    time.sleep(2)
 
     # select random space
     randomIndex = random.randint(0, 8)
@@ -203,11 +211,11 @@ def gamePlay(firstTurnIndex, symbolAssignmentHash):
             writeMoveToBoard( userMove, activeGameBoard, symbolAssignmentHash[HUMAN] )
 
             if checkForWin(userMovesList) == True:
-                gameMessage("You Won")
-                gameOver == True
+                gameMessage("You Won （〜^∇^ )〜")
+                gameOver = True
             elif checkForTie(activeGameBoard.copy()) == True:
                 gameMessage("It's a tie!")
-                gameOver == True
+                gameOver = True
             else:
                 currentTurnIndex = 0 if currentTurnIndex == 1 else 1
             
@@ -223,19 +231,16 @@ def gamePlay(firstTurnIndex, symbolAssignmentHash):
             writeMoveToBoard(computerMove, activeGameBoard, symbolAssignmentHash[COMPUTER])
 
             if checkForWin(computerMovesList) == True:
-                gameMessage("Computer Won")
-                gameOver == True
+                gameMessage("Computer Won ಠ╭╮ಠ")
+                gameOver = True
             elif checkForTie(activeGameBoard.copy()) == True:
                 gameMessage("It's a tie!")
-                gameOver == True
+                gameOver = True
             else:
                 currentTurnIndex = 0 if currentTurnIndex == 1 else 1
                 
             
             printBoard(activeGameBoard)
             
-            
-
-
 
 startGame()
