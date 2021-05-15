@@ -8,6 +8,6 @@ Things I'd still like to improve:
 * GUI interface for the game
 * Improve computer strategy _(currently the computer selects a random space)_
 * Break code out into modules _(constants, util functions, gameplay functions)_
-* Refactor larger functions into smaller ones _(gamePlay, getHuman/Computermove especially)_
+* Refactor larger functions into smaller ones _(gamePlay, getHuman/ComputerMove especially)_
 
 <br/><br/>![Test](https://i.ibb.co/1mBd7R5/Screen-Shot-2021-05-15-at-9-11-57-AM.png)
