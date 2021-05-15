@@ -2,6 +2,7 @@
 import random
 from terminaltables import AsciiTable
 import time
+
 # constants
 X = "X"
 O = "O"
@@ -40,7 +41,11 @@ WIN_COMBINATIONS = [
     ["A1", "B2", "C3"],
     ["A3", "B2", "C1"],
 ]
+# ============= End of CONSTANTS section =============
+# TODO: split this out into a constants.py file
 
+
+# gameplay
 # print the intro message to console
 def introduction():
     print("\n")
@@ -55,49 +60,10 @@ def gameMessage(message):
     print(message)
     print(str("=" * len(message)))
 
+# print board to console
 def printBoard(board):
     table = AsciiTable(board)
     print(table.table)
-
-def startGame():
-    introduction()
-    pickSymbol()
-
-def isSymbolValid(rawUserInputSymbol):
-    return rawUserInputSymbol in VALID_SYMBOLS
-
-def isInputValidMove(userInput):
-    return userInput in VALID_MOVES
-
-def isSpaceAvailable(move, activeGameBoard):
-    spaceIndex = GAME_BOARD_INDEX[move]
-    targetSpace = activeGameBoard[spaceIndex[0]][spaceIndex[1]]
-    return targetSpace == BLANK_CELL
-
-def writeMoveToBoard(move, activeGameBoard, symbol):
-    spaceIndex = GAME_BOARD_INDEX[move]
-    activeGameBoard[spaceIndex[0]][spaceIndex [1]] = " " + symbol + " "
-
-def checkForWin(movesList):
-    for winOption in WIN_COMBINATIONS:
-        winTarget = 0
-        for space in winOption:
-            if space not in movesList:
-                break
-            else:
-                winTarget+=1
-
-                if (winTarget == 3):
-                    return True
-
-def checkForTie(activeGameBoard):
-    markedCellsList = []
-
-    for row in range(1,4):
-        for cell in range(1,4):
-            markedCellsList.append(activeGameBoard[row][cell])
-
-    return BLANK_CELL not in markedCellsList
 
 # Pick a symbol
 def pickSymbol():
@@ -127,6 +93,7 @@ def pickSymbol():
 
     pickFirstTurn(symbolAssignmentHash)
 
+# randomly assign first move
 def pickFirstTurn(symbolAssignmentHash):
     firstTurnIndex = random.randint(0,1)
     firstTurn = VALID_PLAYERS[firstTurnIndex]
@@ -138,7 +105,8 @@ def pickFirstTurn(symbolAssignmentHash):
 
     gamePlay(firstTurnIndex, symbolAssignmentHash)
 
-
+# validate move is available and space is open
+# TODO refactor, clean up naming
 def getHumanMove(activeGameBoard):
     isSpaceAvailableBool = False
     isInputValidBool = False
@@ -170,28 +138,8 @@ def getHumanMove(activeGameBoard):
     
     return validInputMove
 
-
-
-def getComputerMove(activeGameBoard):
-    isSpaceAvailableBool = False
-    randomIndex = 0
-    randomMove = ""
-
-    # mimic the computer thinking
-    time.sleep(2)
-
-    # select random space
-    randomIndex = random.randint(0, 8)
-    randomMove = VALID_MOVES[randomIndex]
-    isSpaceAvailableBool = isSpaceAvailable(randomMove, activeGameBoard)
-
-    while isSpaceAvailableBool == False:
-        randomIndex = random.randint(0, 8)
-        randomMove = VALID_MOVES[randomIndex]
-        isSpaceAvailableBool = isSpaceAvailable(randomMove, activeGameBoard)
-    
-    return randomMove
-
+# main gameplay function
+# TODO needs refactor
 def gamePlay(firstTurnIndex, symbolAssignmentHash):
     activeGameBoard = GAME_BOARD.copy()
     currentTurnIndex = firstTurnIndex
@@ -202,7 +150,8 @@ def gamePlay(firstTurnIndex, symbolAssignmentHash):
     computerMove = ""
 
     while gameOver == False:
-                   
+
+        # TODO abstract logic in these two if blocks (ln 79 and 98) into a single function         
         if VALID_PLAYERS[currentTurnIndex] == HUMAN:
             gameMessage("Your move!")
             userMove = getHumanMove(activeGameBoard.copy())
@@ -243,4 +192,71 @@ def gamePlay(firstTurnIndex, symbolAssignmentHash):
             printBoard(activeGameBoard)
             
 
+def startGame():
+    introduction()
+    pickSymbol()
+# ============= End of gameplay section (functions with user input and terminal output) =============
+# TODO: split this out into a play-game.py file
+
+
+# utility functions (not user input or terminal output)
+def isSymbolValid(rawUserInputSymbol):
+    return rawUserInputSymbol in VALID_SYMBOLS
+
+def isInputValidMove(userInput):
+    return userInput in VALID_MOVES
+
+def isSpaceAvailable(move, activeGameBoard):
+    spaceIndex = GAME_BOARD_INDEX[move]
+    targetSpace = activeGameBoard[spaceIndex[0]][spaceIndex[1]]
+    return targetSpace == BLANK_CELL
+
+def writeMoveToBoard(move, activeGameBoard, symbol):
+    spaceIndex = GAME_BOARD_INDEX[move]
+    activeGameBoard[spaceIndex[0]][spaceIndex [1]] = " " + symbol + " "
+
+def checkForWin(movesList):
+    for winOption in WIN_COMBINATIONS:
+        winTarget = 0
+        for space in winOption:
+            if space not in movesList:
+                break
+            else:
+                winTarget+=1
+
+                if (winTarget == 3):
+                    return True
+
+def checkForTie(activeGameBoard):
+    markedCellsList = []
+
+    for row in range(1,4):
+        for cell in range(1,4):
+            markedCellsList.append(activeGameBoard[row][cell])
+
+    return BLANK_CELL not in markedCellsList
+
+def getComputerMove(activeGameBoard):
+    isSpaceAvailableBool = False
+    randomIndex = 0
+    randomMove = ""
+
+    # mimic the computer thinking
+    time.sleep(2)
+
+    # select random space
+    randomIndex = random.randint(0, 8)
+    randomMove = VALID_MOVES[randomIndex]
+    isSpaceAvailableBool = isSpaceAvailable(randomMove, activeGameBoard)
+
+    while isSpaceAvailableBool == False:
+        randomIndex = random.randint(0, 8)
+        randomMove = VALID_MOVES[randomIndex]
+        isSpaceAvailableBool = isSpaceAvailable(randomMove, activeGameBoard)
+    
+    return randomMove
+# ============= End of utils section (functions without user input or terminal output) =============
+# TODO: split this out into a utils.py file
+
+# TODO move to play-game.py
 startGame()
