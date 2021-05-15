@@ -157,6 +157,8 @@ def gamePlay(firstTurnIndex, symbolAssignmentHash):
             userMove = getHumanMove(activeGameBoard.copy())
             userMovesList.append(userMove)
 
+            # Slight delay for write improves user experience
+            time.sleep(1)
             writeMoveToBoard( userMove, activeGameBoard, symbolAssignmentHash[HUMAN] )
 
             if checkForWin(userMovesList) == True:
@@ -175,8 +177,12 @@ def gamePlay(firstTurnIndex, symbolAssignmentHash):
             gameMessage("Computer Move")
             computerMove = getComputerMove(activeGameBoard.copy())
             computerMovesList.append(computerMove)
-            print(computerMove)
+
+            # mimic the computer thinking
+            gameMessage("Computer is thinking...(ー_ーゞ")
+            time.sleep(3)
             
+            print(computerMove)
             writeMoveToBoard(computerMove, activeGameBoard, symbolAssignmentHash[COMPUTER])
 
             if checkForWin(computerMovesList) == True:
@@ -240,9 +246,6 @@ def getComputerMove(activeGameBoard):
     isSpaceAvailableBool = False
     randomIndex = 0
     randomMove = ""
-
-    # mimic the computer thinking
-    time.sleep(2)
 
     # select random space
     randomIndex = random.randint(0, 8)
